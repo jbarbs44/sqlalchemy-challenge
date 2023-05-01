@@ -123,3 +123,21 @@ def tobs():
 def start():
     #Create our session (link) from Python to the DB
     session = Session(engine)
+
+    #Query for min, max and avg
+    station_temp_query = session.query(Measurement.station, func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs))\
+    .filter(Measurement.station =='USC00519281').all()
+
+    session.close()
+
+    station_temp = []
+    for station, (func.min(Measurement.tobs)), func.max(Measurement.tobs), func.avg(Measurement.tobs) in station_temp_query:
+        s_temp_dict = {}
+        s_temp_dict["min"] = func.min(Measurement.tobs)
+        s_temp_dict["max"] = func.max(Measurement.tobs)
+        s_temp_dict["avg"] = func.avg(Measurement.tobs) 
+        station_temp.append(s_temp_dict)
+
+    return jsonify(station_temp)
+
+
